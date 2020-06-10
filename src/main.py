@@ -26,5 +26,22 @@ if __name__ == "__main__":
             # TODO: システムメッセージチャンネルに送りたいがdiscord APIに存在しない?
             main_text_channel = discord.utils.find(lambda c: c.type == discord.ChannelType.text, server.channels)
             await main_text_channel.send(f"bot({client.user}) is online!")
-        
+
+    # TODO: discord.ext.commandsに書き換える
+    @client.event
+    async def on_message(message):
+        if message.author != client.user:
+            if message.content == "$Hello":
+                await message.channel.send("Hello")
+            elif message.content == "$Voice":
+                if message.author.voice is None:
+                    await message.channel.send("先にコマンド送信者がボイスチャンネルに入っている必要性があります")
+                else:
+                    await message.author.voice.channel.connect()
+            elif message.content == "$Voice Dis":
+                if message.channel.guild.voice_client is None:
+                    await message.channel.send("Botがボイスチャンネルに入っていません")
+                else:
+                    await message.channel.guild.voice_client.disconnect()    
+
     client.run(token)
